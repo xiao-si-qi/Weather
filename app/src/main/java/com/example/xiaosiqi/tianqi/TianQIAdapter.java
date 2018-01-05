@@ -1,7 +1,6 @@
 package com.example.xiaosiqi.tianqi;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.xiaosiqi.tianqi.R;
-import com.example.xiaosiqi.tianqi.TianQi;
+import com.example.xiaosiqi.tianqi.gon_ju.IconTianQI;
 
 import java.util.ArrayList;
 import java.util.List;

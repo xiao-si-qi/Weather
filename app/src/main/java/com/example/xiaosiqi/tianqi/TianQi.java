@@ -1,5 +1,7 @@
 package com.example.xiaosiqi.tianqi;
 
+import android.util.Log;
+
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +17,7 @@ public class TianQi {
     private String fengli;
     private String fengxiang;
     private String type;
-
+    private static final String TAG = "TianQi";
     public TianQi(String date, String hige, String low, String fengli, String fengxiang, String type) {
         this.date = date;
         this.hige = hige;
@@ -76,6 +78,19 @@ public class TianQi {
 
     public String getFengxiang() {
         return fengxiang;
+    }
+    public int getIntHige()
+    {
+        String replace = hige.replace("最高气温:", "").replace("℃", "");
+        Log.d(TAG, "getIntHige: "+replace);
+        return Integer.valueOf(replace);
+        
+    }
+    public int getIntLow()
+    {
+
+        String replace = low.replace("最低气温:", "").replace("℃", "");
+        return Integer.valueOf(replace);
     }
 
     public void setFengxiang(String fengxiang) {

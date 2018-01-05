@@ -4,39 +4,37 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.xiaosiqi.tianqi.gon_ju.IconTianQI;
+import com.example.xiaosiqi.tianqi.gon_ju.SetChartData;
 import com.example.xiaosiqi.tianqi.network.Tools;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.LineData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView btXuanXiang;//展开侧滑菜单的按钮
     private ListView listTianqi;//显示天气的列表
     private SharedPreferences sp;  //得到当前选择的城市信息
+    private ScrollView scrollView;//滑动视图
     SharedPreferences.Editor editor;//存储天气数据
+
 
     //以下为显示第一天的天气数据的控件
     private TextView textDate;    //显示今天的日期
@@ -59,27 +59,18 @@ public class MainActivity extends AppCompatActivity {
     private TextView textGanmao;  //显示感冒指数
     private ImageView imageType;  //显示天气图标
     private TextView textType;    //显示今天天气
+    //以下为图表控件的定义
+    private LineChart wengDuLineChart;
     /*侧滑菜单布局*/
     LinearLayout mLlMenu;
     /*侧滑菜单ListView放置菜单项*/
     ImageView mIvContent;
     DrawerLayout mMyDrawable;
     ActionBarDrawerToggle mToggle;
-
     private Context context = this;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1: {
-                }
-            }
-        }
-    };
 
     @Override
-    protected void onRestart() {  //
+    protected void onRestart() {  //界面被重新加载时刷新数据
         super.onRestart();
         String cityID = sp.getString("cityID", null);//读取选择的城市
         if (cityID == null || cityID.equals("")) {
@@ -110,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-
         setContentView(R.layout.activity_main);
         btGenXinTQ = (Button) findViewById(R.id.btGenXinTQ);
         btChenShi = (Button) findViewById(R.id.btChenShi);
@@ -129,8 +118,9 @@ public class MainActivity extends AppCompatActivity {
         mLlMenu = (LinearLayout) findViewById(R.id.llMenu);
         mMyDrawable = (DrawerLayout) findViewById(R.id.dlMenu);
         btXuanXiang = (ImageView) findViewById(R.id.btXuanXiang);
-
-
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+        wengDuLineChart = (LineChart) findViewById(R.id.wenDuLineChart);
+        listTianqi.setFocusable(false);//   去掉list的焦点，使ScrollView默认位置在顶部
         String cityID = sp.getString("cityID", null);//读取选择的城市
         if (sp.getString("TianQIdata", null) != null)   //判断上次是否缓存了天气数据
         {
@@ -147,14 +137,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                    mMyDrawable.openDrawer(Gravity.LEFT);
+                mMyDrawable.openDrawer(Gravity.LEFT);
 
             }
         });
 
         btGenXinTQ.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {  //刷新天气按钮
                 String cityID = sp.getString("cityID", null);
                 if (cityID == null || cityID.equals("")) {
                     cityID = "101010100";//默认为北京
@@ -167,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         btChenShi.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {//展开策划菜单
 
                 Intent intent = new Intent(context, CityActivity.class);
                 startActivity(intent);
@@ -198,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return "";
             }
-
             return data;
         }
 
@@ -248,8 +237,23 @@ public class MainActivity extends AppCompatActivity {
             IconTianQI iconTianQI = new IconTianQI();
             imageType.setImageResource(iconTianQI.tianQiTextToIcon(tianQi[1].getType()));
             textGanmao.setText(ganmao);
-
+            SetChartData setChartData = new SetChartData();
+            List<Integer> low = new ArrayList<>();
+            List<Integer> hige = new ArrayList<>();
+            List<String> riQi = new ArrayList<>();
+            for (int i = 0; i < tianQi.length; i++) {
+                low.add(tianQi[i].getIntLow());
+                hige.add(tianQi[i].getIntHige());
+                riQi.add(tianQi[i].getDate());
+                Log.d(TAG, "jieXiTianqiData: "+tianQi[i].getDate());
+            }
+            setChartData.setLowWengDu(low);
+            setChartData.setHighWengDu(hige);
+            setChartData.setRiQi(riQi);
+            LineData lineData = setChartData.getLineData();
+            setChartData.showChart(wengDuLineChart, lineData);
             List<TianQi> list = new ArrayList<>();
+
             for (int i = 2; i < tianQi.length; i++) {//数组0，1是昨天和今天的天气数据
                 list.add(tianQi[i]);
             }

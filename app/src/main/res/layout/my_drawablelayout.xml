@@ -15,8 +15,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/titeH">
-
+        android:layout_marginTop="@dimen/titeH"
+        android:id="@+id/scrollView"
+       >
 
         <LinearLayout
             android:id="@+id/llContent"
@@ -34,6 +35,12 @@
 
 
                 <include layout="@layout/today"></include>
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:id="@+id/wenDuLineChart">
+                </com.github.mikephil.charting.charts.LineChart>
 
                 <ListView
 

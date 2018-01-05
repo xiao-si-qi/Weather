@@ -1,4 +1,6 @@
-package com.example.xiaosiqi.tianqi;
+package com.example.xiaosiqi.tianqi.gon_ju;
+
+import com.example.xiaosiqi.tianqi.R;
 
 /**
  * Created by xiaosiqi on 2017/12/18.
