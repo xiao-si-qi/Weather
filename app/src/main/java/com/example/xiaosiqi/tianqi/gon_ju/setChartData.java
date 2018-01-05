@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Created by xiaosiqi on 2018/1/5.
+ * 图表数据的适配级调整图表样式
  */
 
 public class SetChartData {
