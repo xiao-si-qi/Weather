@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">天气</string>
+    <string name="open">open</string>
+    <string name="clos">clos</string>
+</resources>
