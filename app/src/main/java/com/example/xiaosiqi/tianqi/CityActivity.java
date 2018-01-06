@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -47,7 +48,7 @@ public class CityActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
     private Context context = this;
-    private TextView title;
+    private LinearLayout title;
     List<CityClass> cityClassList = new ArrayList<>();  //城市列表
     List<CountyClass> countyClasses = new ArrayList<>();//县市列表
     private ProgressDialog loading;
@@ -69,7 +70,7 @@ public class CityActivity extends AppCompatActivity {
             }
         }
         setContentView(R.layout.activity_city);
-        title= (TextView) findViewById(R.id.Title);
+        title= (LinearLayout) findViewById(R.id.Title);
         setDataSP=getSharedPreferences("setData",MODE_PRIVATE);
         setDataSPEditor=setDataSP.edit();
         int zhuTi = setDataSP.getInt("ZhuTi",getResources().getColor(R.color.zhuti1));
@@ -87,7 +88,13 @@ public class CityActivity extends AppCompatActivity {
         loading.show();
 
 
-
+        ImageView imageView= (ImageView) findViewById(R.id.fanhui);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         btSet.setOnClickListener(new View.OnClickListener() {
             @Override

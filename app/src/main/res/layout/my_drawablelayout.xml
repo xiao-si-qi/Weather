@@ -8,7 +8,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
         <include layout="@layout/headbar_toolbar" />
     </LinearLayout>
 
@@ -21,6 +20,7 @@
 
         <LinearLayout
             android:id="@+id/llContent"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -46,7 +46,7 @@
 
                     android:id="@+id/listTianqi"
                     android:layout_width="match_parent"
-                    android:layout_height="450dp"></ListView>
+                    android:layout_height="500dp"></ListView>
             </LinearLayout>
 
 
@@ -69,8 +69,8 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="210dp"
-                android:background="@drawable/zhuti1png"
+                android:layout_height="235dp"
+                android:background="@mipmap/zhuti1png"
                 android:id="@+id/zhuTiPNG"/>
 
             <LinearLayout
@@ -128,7 +128,6 @@
                     android:background="@android:color/transparent"
                     android:text="主题设置" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -136,30 +135,50 @@
                 android:gravity="center">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@color/zhuti1"
                     android:id="@+id/zhuTi1"/>
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginLeft="20dp"
                     android:src="@color/zhuti2"
                     android:id="@+id/zhuTi2"/>
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginLeft="20dp"
                     android:src="@color/zhuti3"
                     android:id="@+id/zhuTi3"/>
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginLeft="20dp"
                     android:src="@color/zhuti4"
                     android:id="@+id/zhuTi4"/>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/guanyu" />
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="关于"
+                    android:id="@+id/btGuanYu"
+                    />
+                </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

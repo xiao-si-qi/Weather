@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private ScrollView scrollView;//滑动视图
     SharedPreferences.Editor editor;//存储天气数据
 
+    ImageView zhuTiPNG;
+    RelativeLayout tbHeadBar;
 
     //以下为显示第一天的天气数据的控件
     private TextView textDate;    //显示今天的日期
@@ -141,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView zhuTi2 = (ImageView) findViewById(R.id.zhuTi2);
         ImageView zhuTi3 = (ImageView) findViewById(R.id.zhuTi3);
         ImageView zhuTi4 = (ImageView) findViewById(R.id.zhuTi4);
-        final ImageView zhuTiPNG= (ImageView) findViewById(R.id.zhuTiPNG);
-        final RelativeLayout tbHeadBar = (RelativeLayout) findViewById(R.id.tbHeadBar);
+        zhuTiPNG = (ImageView) findViewById(R.id.zhuTiPNG);
+        tbHeadBar = (RelativeLayout) findViewById(R.id.tbHeadBar);
         final int zhuTi = setDataSP.getInt("ZhuTi", getResources().getColor(R.color.zhuti1));
         tbHeadBar.setBackgroundColor(zhuTi);
 
@@ -156,6 +161,27 @@ public class MainActivity extends AppCompatActivity {
             new MyAsyncTask(cityID).execute();
         } else {
             new MyAsyncTask(cityID).execute();     //启动网络线程获取数据
+        }
+            //读取主题
+        int zhuTiID = setDataSP.getInt("ZhuTiID", 1);
+        switch (zhuTiID) {
+            case 1: {
+                setZhuTi(1,R.mipmap.zhuti1png,ContextCompat.getColor(context, R.color.zhuti1));
+            }
+            break;
+            case 2: {
+                setZhuTi(2,R.mipmap.zhuti2png,ContextCompat.getColor(context, R.color.zhuti2));
+            }
+            break;
+            case 3: {
+                setZhuTi(3,R.mipmap.zhuti3png,ContextCompat.getColor(context, R.color.zhuti3));
+            }
+            break;
+            case 4: {
+                setZhuTi(4,R.mipmap.zhuti4png,ContextCompat.getColor(context, R.color.zhuti4));
+            }
+            break;
+
         }
 
 
@@ -191,31 +217,50 @@ public class MainActivity extends AppCompatActivity {
                 mMyDrawable.closeDrawer(Gravity.LEFT);
             }
         });
-
+        //设置主题
         zhuTi1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                zhuTiPNG.setBackgroundResource(R.drawable.zhuti1png);
-                setDataSPEditor.putInt("ZhuTi", getResources().getColor(R.color.zhuti1));
-                setDataSPEditor.commit();
-
-                tbHeadBar.setBackgroundColor(getResources().getColor(R.color.zhuti1));
-                jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
-
-
+                setZhuTi(1,R.mipmap.zhuti1png, ContextCompat.getColor(context, R.color.zhuti1));
             }
         });
         zhuTi2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                zhuTiPNG.setBackgroundResource(R.drawable.zhuti2png);
-                setDataSPEditor.putInt("ZhuTi", getResources().getColor(R.color.zhuti2));
-                setDataSPEditor.commit();
-                tbHeadBar.setBackgroundColor(getResources().getColor(R.color.zhuti2));
-                jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
-
+                setZhuTi(2,R.mipmap.zhuti2png,ContextCompat.getColor(context, R.color.zhuti2));
             }
         });
+        zhuTi3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setZhuTi(3,R.mipmap.zhuti3png,ContextCompat.getColor(context, R.color.zhuti3));
+            }
+        });
+        zhuTi4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setZhuTi(4,R.mipmap.zhuti4png,ContextCompat.getColor(context, R.color.zhuti4));
+            }
+        });
+        Button guanyu= (Button) findViewById(R.id.btGuanYu);
+        guanyu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context,GuanYuActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+    private void setZhuTi(int id, int zhuTi, int zhuTiColor) {  //主题设置方法
+        zhuTiPNG.setBackgroundResource(zhuTi);
+        setDataSPEditor.putInt("ZhuTi",zhuTiColor);
+        setDataSPEditor.putInt("ZhuTiID", id);
+        setDataSPEditor.commit();
+        tbHeadBar.setBackgroundColor( zhuTiColor);
+        jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
+        Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
     }
 
 
@@ -279,13 +324,20 @@ public class MainActivity extends AppCompatActivity {
                 tianQi[i] = tadeTiQI.getTianQi(jsonArray.get(i - 1).toString());
             }
             //以下的代码更新今天的天气数据到主界面
-            textDate.setText(tianQi[1].getDate());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月");
+            SimpleDateFormat formatter2 = new SimpleDateFormat("M月");
+            Date curDate = new Date(System.currentTimeMillis());//获取当前日期
+            String xiTongRiQI= formatter.format(curDate);
+            String xiTongYue= formatter2.format(curDate);
+
+
+            textDate.setText(xiTongRiQI+tianQi[1].getDate());
             textType.setText(tianQi[1].getType());
             textFengxiang.setText(tianQi[1].getFengxiang());
             textFengli.setText(tianQi[1].getFengli());
             textHigh.setText(tianQi[1].getHige());
             textlow.setText(tianQi[1].getLow());
-            textWenDu.setText("温度：" + wendu + "℃");
+            textWenDu.setText( wendu);
             IconTianQI iconTianQI = new IconTianQI();
             imageType.setImageResource(iconTianQI.tianQiTextToIcon(tianQi[1].getType()));
             textGanmao.setText(ganmao);
@@ -312,11 +364,12 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 2; i < tianQi.length; i++) {//数组0，1是昨天和今天的天气数据
                 list.add(tianQi[i]);
             }
-            TianQIAdapter tianQIAdapter = new TianQIAdapter(context, list);
+            list.get(0).setDate(list.get(0).getDate()+"  \n明天");
+            TianQIAdapter tianQIAdapter = new TianQIAdapter(context,list,xiTongYue);
             listTianqi.setAdapter(tianQIAdapter);
             textChenShi.setText(city + "天气");
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }

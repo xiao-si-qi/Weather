@@ -21,10 +21,17 @@ public class TianQIAdapter extends BaseAdapter {
     private Context context;
     private List<TianQi> list=new ArrayList<>();
     private LayoutInflater inflater;
+    private String yue;
     private static final String TAG = "TianQIAdapter";
     public TianQIAdapter(Context context, List<TianQi> list) {
         this.context = context;
         this.list = list;
+    }
+
+    public TianQIAdapter(Context context, List<TianQi> list, String yue) {
+        this.context = context;
+        this.list = list;
+        this.yue = yue;
     }
 
     @Override
@@ -60,7 +67,8 @@ public class TianQIAdapter extends BaseAdapter {
 
         TianQi tianQi=list.get(i);
         IconTianQI iconTianQI=new IconTianQI();
-        textDate.setText(tianQi.getDate());
+
+        textDate.setText(yue+tianQi.getDate());
         textHigh.setText(tianQi.getHige());
         textlow.setText(tianQi.getLow());
         textType.setText(tianQi.getType());
@@ -69,7 +77,6 @@ public class TianQIAdapter extends BaseAdapter {
 
         textFengxiang.setText(tianQi.getFengxiang());
         textFengli.setText(tianQi.getFengli());
-
         return view;
     }
 }

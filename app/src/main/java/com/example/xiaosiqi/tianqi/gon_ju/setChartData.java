@@ -43,7 +43,14 @@ public class SetChartData {
 
     public LineData getLineData ()
     {
-        List<String> xValue =riQi;   //x轴数据，日期
+        List<String> xValue =new ArrayList<>();//x轴数据，日期
+        xValue.add("昨天");
+        xValue.add("今天");
+        xValue.add("明天");
+        for (int i = 3; i < riQi.size(); i++) {
+            xValue.add(riQi.get(i));
+        }
+
         List<Entry> yValue =new ArrayList<>();  //第一条y轴数据，最低温
         for (int i=0;i<xValue.size();i++)
         {
