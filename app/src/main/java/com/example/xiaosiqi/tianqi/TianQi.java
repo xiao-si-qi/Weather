@@ -32,8 +32,11 @@ public class TianQi {
 
     public String getDate() {
 
-
         return date;
+    }
+    public String getXinQi() {
+        String[]  strs=date.split("日");
+        return  strs[1];
     }
 
     public void setDate(String date) {

@@ -11,11 +11,12 @@
      android:clipToPadding="true"
      android:layout_width="match_parent"
      android:layout_height="@dimen/titeH"
-     android:background="@color/colorAccent"
+     android:background="@color/zhuti1"
      android:gravity="bottom"
      android:text="选择您所在的地区"
      android:textColor="#ffffff"
      android:textSize="25dp"
+     android:id="@+id/Title"
      />
  <LinearLayout
      android:layout_width="match_parent"

@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tite">#97e3ff</color>
+    <color name="zhuti1">#FF4081</color>
+    <color name="zhuti2">#97e3ff</color>
+    <color name="zhuti3">#FF4081</color>
+    <color name="zhuti4">#97e3ff</color>
 </resources>

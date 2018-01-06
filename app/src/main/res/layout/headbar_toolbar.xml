@@ -4,7 +4,8 @@
     android:id="@+id/tbHeadBar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/titeH"
-    android:background="@color/colorAccent">
+    android:background="@color/zhuti1"
+    >
 
     <TextView
         android:id="@+id/textChenShi"

@@ -16,8 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xiaosiqi.tianqi.gon_ju.CityJeXi;
@@ -40,14 +42,17 @@ public class CityActivity extends AppCompatActivity {
     private Spinner spCity;       //选择城市的下拉列表
     private Spinner spCounty;  //选择县/市的下拉列表
     private Button btSet;      //设置按钮
+    private SharedPreferences setDataSP;   //存储设置信息
+    private SharedPreferences.Editor setDataSPEditor;
     private SharedPreferences sp;
     private SharedPreferences.Editor editor;
     private Context context = this;
+    private TextView title;
     List<CityClass> cityClassList = new ArrayList<>();  //城市列表
     List<CountyClass> countyClasses = new ArrayList<>();//县市列表
     private ProgressDialog loading;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明状态栏
@@ -64,7 +69,11 @@ public class CityActivity extends AppCompatActivity {
             }
         }
         setContentView(R.layout.activity_city);
-
+        title= (TextView) findViewById(R.id.Title);
+        setDataSP=getSharedPreferences("setData",MODE_PRIVATE);
+        setDataSPEditor=setDataSP.edit();
+        int zhuTi = setDataSP.getInt("ZhuTi",getResources().getColor(R.color.zhuti1));
+        title.setBackgroundColor(zhuTi);
         spProvince = (Spinner) findViewById(R.id.spProvince);
         spCity = (Spinner) findViewById(R.id.spCity);
         spCounty = (Spinner) findViewById(R.id.spounty);
@@ -89,6 +98,8 @@ public class CityActivity extends AppCompatActivity {
                 editor.putLong("city",spCity.getSelectedItemId());
                 editor.putLong("county",spCounty.getSelectedItemId());
                 editor.commit();
+                setDataSPEditor.putBoolean("刷新标记",true);//如果是点击了按钮，就应该刷新数据
+                setDataSPEditor.commit();
              //   Toast.makeText(context, "设置成功", Toast.LENGTH_SHORT).show();
                 finish();
 
@@ -163,9 +174,7 @@ public class CityActivity extends AppCompatActivity {
             });
             loading.dismiss();
 
-
         }
-
         @Override
         protected String doInBackground(Void... voids) {
             String fileName = "city.json";

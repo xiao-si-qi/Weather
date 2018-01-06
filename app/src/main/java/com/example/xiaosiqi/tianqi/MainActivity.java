@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,16 +70,29 @@ public class MainActivity extends AppCompatActivity {
     ActionBarDrawerToggle mToggle;
     private Context context = this;
 
+    private SharedPreferences setDataSP;   //存储设置信息
+    private SharedPreferences.Editor setDataSPEditor;
+
     @Override
     protected void onRestart() {  //界面被重新加载时刷新数据
+
         super.onRestart();
-        String cityID = sp.getString("cityID", null);//读取选择的城市
-        if (cityID == null || cityID.equals("")) {
-            cityID = "101010100";//默认为北京
-            new MyAsyncTask(cityID).execute();
-        } else {
-            new MyAsyncTask(cityID).execute();     //启动网络线程获取数据
+        setDataSP = getSharedPreferences("setData", MODE_PRIVATE);
+        setDataSPEditor = setDataSP.edit();
+        setDataSP.getBoolean("刷新标记", true);
+        if (setDataSP.getBoolean("刷新标记", true)) {
+            String cityID = sp.getString("cityID", null);//读取选择的城市
+            if (cityID == null || cityID.equals("")) {
+                cityID = "101010100";//默认为北京
+                new MyAsyncTask(cityID).execute();
+            } else {
+                new MyAsyncTask(cityID).execute();     //启动网络线程获取数据
+            }
+            setDataSPEditor.putBoolean("刷新标记", false);
+            setDataSPEditor.commit();
+
         }
+
 
     }
 
@@ -87,6 +101,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         sp = context.getSharedPreferences("cityData", context.MODE_PRIVATE);
         editor = sp.edit();
+        setDataSP = getSharedPreferences("setData", MODE_PRIVATE);
+        setDataSPEditor = setDataSP.edit();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //透明状态栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -120,6 +137,15 @@ public class MainActivity extends AppCompatActivity {
         btXuanXiang = (ImageView) findViewById(R.id.btXuanXiang);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         wengDuLineChart = (LineChart) findViewById(R.id.wenDuLineChart);
+        ImageView zhuTi1 = (ImageView) findViewById(R.id.zhuTi1);
+        ImageView zhuTi2 = (ImageView) findViewById(R.id.zhuTi2);
+        ImageView zhuTi3 = (ImageView) findViewById(R.id.zhuTi3);
+        ImageView zhuTi4 = (ImageView) findViewById(R.id.zhuTi4);
+        final ImageView zhuTiPNG= (ImageView) findViewById(R.id.zhuTiPNG);
+        final RelativeLayout tbHeadBar = (RelativeLayout) findViewById(R.id.tbHeadBar);
+        final int zhuTi = setDataSP.getInt("ZhuTi", getResources().getColor(R.color.zhuti1));
+        tbHeadBar.setBackgroundColor(zhuTi);
+
         listTianqi.setFocusable(false);//   去掉list的焦点，使ScrollView默认位置在顶部
         String cityID = sp.getString("cityID", null);//读取选择的城市
         if (sp.getString("TianQIdata", null) != null)   //判断上次是否缓存了天气数据
@@ -165,7 +191,33 @@ public class MainActivity extends AppCompatActivity {
                 mMyDrawable.closeDrawer(Gravity.LEFT);
             }
         });
+
+        zhuTi1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zhuTiPNG.setBackgroundResource(R.drawable.zhuti1png);
+                setDataSPEditor.putInt("ZhuTi", getResources().getColor(R.color.zhuti1));
+                setDataSPEditor.commit();
+
+                tbHeadBar.setBackgroundColor(getResources().getColor(R.color.zhuti1));
+                jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
+
+
+            }
+        });
+        zhuTi2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zhuTiPNG.setBackgroundResource(R.drawable.zhuti2png);
+                setDataSPEditor.putInt("ZhuTi", getResources().getColor(R.color.zhuti2));
+                setDataSPEditor.commit();
+                tbHeadBar.setBackgroundColor(getResources().getColor(R.color.zhuti2));
+                jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
+
+            }
+        });
     }
+
 
     class MyAsyncTask extends AsyncTask<Void, Void, String> {
         private String city;
@@ -237,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             IconTianQI iconTianQI = new IconTianQI();
             imageType.setImageResource(iconTianQI.tianQiTextToIcon(tianQi[1].getType()));
             textGanmao.setText(ganmao);
+            //将温度的数据写到图表
             SetChartData setChartData = new SetChartData();
             List<Integer> low = new ArrayList<>();
             List<Integer> hige = new ArrayList<>();
@@ -244,16 +297,18 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < tianQi.length; i++) {
                 low.add(tianQi[i].getIntLow());
                 hige.add(tianQi[i].getIntHige());
-                riQi.add(tianQi[i].getDate());
-                Log.d(TAG, "jieXiTianqiData: "+tianQi[i].getDate());
+                riQi.add(tianQi[i].getXinQi());
+                Log.d(TAG, "jieXiTianqiData: " + tianQi[i].getDate());
             }
             setChartData.setLowWengDu(low);
             setChartData.setHighWengDu(hige);
             setChartData.setRiQi(riQi);
             LineData lineData = setChartData.getLineData();
-            setChartData.showChart(wengDuLineChart, lineData);
-            List<TianQi> list = new ArrayList<>();
+            int zhuTi = setDataSP.getInt("ZhuTi", getResources().getColor(R.color.zhuti1));
+            setChartData.showChart(wengDuLineChart, lineData, zhuTi);
 
+
+            List<TianQi> list = new ArrayList<>();
             for (int i = 2; i < tianQi.length; i++) {//数组0，1是昨天和今天的天气数据
                 list.add(tianQi[i]);
             }
