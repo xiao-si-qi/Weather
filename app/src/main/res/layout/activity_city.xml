@@ -26,14 +26,13 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginLeft="10dp"
-      android:layout_marginBottom="1dp"
+      android:layout_marginBottom="2dp"
       android:text="选择您所在的地区"
       android:textColor="#ffffff"
-      android:textSize="25dp"
+      android:textSize="20dp"
 
       />
  </LinearLayout>
-
 
 
  <LinearLayout
@@ -56,7 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="选择城市"
-        android:textSize="25dp"
+        android:textColor="@color/blak"
+        android:textSize="15dp"
         />
     <Spinner
         android:layout_width="match_parent"
@@ -65,8 +65,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/blak"
+        android:textSize="15dp"
         android:text="选择县/市"
-        android:textSize="25dp"
+
         />
     <Spinner
         android:layout_width="match_parent"
@@ -77,6 +79,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/btSet"
+        android:textColor="#ffffff"
+        android:background="@color/zhuti1"
         android:text="确定"/>
  </LinearLayout>
 </LinearLayout>

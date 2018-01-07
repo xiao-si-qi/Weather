@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
                 new MyAsyncTask(msg.obj.toString(),2).execute(); //请求天气数据
             }
+            else {
+                Toast.makeText(context,"定位失败",Toast.LENGTH_SHORT).show();
+            }
         }
     };
 

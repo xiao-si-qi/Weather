@@ -58,10 +58,11 @@ public class IPdinWei {
             String cityCode = jsonObject.getString("city");
             return cityCode;
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
+
 
     }
 }

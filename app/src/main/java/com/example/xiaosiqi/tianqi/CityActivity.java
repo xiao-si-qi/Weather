@@ -71,14 +71,16 @@ public class CityActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_city);
         title= (LinearLayout) findViewById(R.id.Title);
+        btSet = (Button) findViewById(R.id.btSet);
         setDataSP=getSharedPreferences("setData",MODE_PRIVATE);
         setDataSPEditor=setDataSP.edit();
         int zhuTi = setDataSP.getInt("ZhuTi",getResources().getColor(R.color.zhuti1));
         title.setBackgroundColor(zhuTi);
+        btSet.setBackgroundColor(zhuTi);
         spProvince = (Spinner) findViewById(R.id.spProvince);
         spCity = (Spinner) findViewById(R.id.spCity);
         spCounty = (Spinner) findViewById(R.id.spounty);
-        btSet = (Button) findViewById(R.id.btSet);
+
         sp = getSharedPreferences("cityData", MODE_PRIVATE);
         editor = sp.edit();
         new MyAsyncTask().execute();
