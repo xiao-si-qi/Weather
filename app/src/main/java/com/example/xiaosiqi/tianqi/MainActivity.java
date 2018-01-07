@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sp;  //得到当前选择的城市信息
     private ScrollView scrollView;//滑动视图
     SharedPreferences.Editor editor;//存储天气数据
-
     ImageView zhuTiPNG;
     RelativeLayout tbHeadBar;
 
