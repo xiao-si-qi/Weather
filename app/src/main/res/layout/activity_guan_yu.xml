@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="github地址："
+            android:text="项目在github开源，地址："
             android:textColor="#000"/>
         <TextView
             android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="本人是刚刚学习安卓不久的初学者，代码写的很垃圾，请各位不要见笑，有什么意见或建议请发到邮箱。"
+            android:text="定位方式是IP定位，如果不准确请手动选择城市。\n本人是刚刚学习安卓不久的初学者，代码写的很垃圾，请各位不要见笑，有什么意见或建议请发到邮箱。"
             android:textColor="#000"/>
         <TextView
             android:layout_width="wrap_content"

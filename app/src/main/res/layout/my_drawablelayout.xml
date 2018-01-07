@@ -43,10 +43,9 @@
                 </com.github.mikephil.charting.charts.LineChart>
 
                 <ListView
-
                     android:id="@+id/listTianqi"
                     android:layout_width="match_parent"
-                    android:layout_height="500dp"></ListView>
+                    android:layout_height="550dp"></ListView>
             </LinearLayout>
 
 
@@ -84,11 +83,14 @@
                     android:layout_height="20dp"
                     android:src="@drawable/genxing" />
 
-                <Button
+                <TextView
                     android:id="@+id/btGenXinTQ"
+
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/blak"
                     android:text="更新天气" />
             </LinearLayout>
 
@@ -103,12 +105,15 @@
                     android:layout_height="20dp"
                     android:src="@drawable/chengshi" />
 
-                <Button
+                <TextView
                     android:id="@+id/btChenShi"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                     android:gravity="center"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/blak"
                     android:background="@android:color/transparent"
-                    android:text="选择城市" />
+                    android:text="手动选择城市" />
             </LinearLayout>
 
             <LinearLayout
@@ -122,9 +127,12 @@
                     android:layout_height="20dp"
                     android:src="@drawable/zhuti" />
 
-                <Button
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/blak"
                     android:background="@android:color/transparent"
                     android:text="主题设置" />
             </LinearLayout>
@@ -170,9 +178,12 @@
                     android:layout_height="20dp"
                     android:src="@drawable/guanyu" />
 
-                <Button
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/blak"
                     android:background="@android:color/transparent"
                     android:text="关于"
                     android:id="@+id/btGuanYu"

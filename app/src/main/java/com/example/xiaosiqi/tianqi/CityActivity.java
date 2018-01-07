@@ -101,6 +101,8 @@ public class CityActivity extends AppCompatActivity {
             public void onClick(View view) {
                 int id = (int) spCounty.getSelectedItemId();
                 editor.putString("cityID", countyClasses.get(id).getCode());
+                editor.putString("cityMing",countyClasses.get(id).getName());
+                Log.d(TAG, "onClick: "+countyClasses.get(id).getName());
                 editor.putLong("province",spProvince.getSelectedItemId());
                 editor.putLong("city",spCity.getSelectedItemId());
                 editor.putLong("county",spCounty.getSelectedItemId());

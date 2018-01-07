@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.xiaosiqi.tianqi.gon_ju.IconTianQI;
 import com.example.xiaosiqi.tianqi.gon_ju.SetChartData;
+import com.example.xiaosiqi.tianqi.network.IPdinWei;
 import com.example.xiaosiqi.tianqi.network.Tools;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
@@ -43,11 +46,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private Button btGenXinTQ;  //更新天气的按钮
+    private TextView btGenXinTQ;  //更新天气的按钮
     private TextView textChenShi; //显示当前选择的城市
-    private Button btChenShi;//选择城市按钮
+    private TextView btChenShi;//选择城市按钮
     private ImageView btXuanXiang;//展开侧滑菜单的按钮
     private ListView listTianqi;//显示天气的列表
+    private ImageView dinWei;  //定位按钮
     private SharedPreferences sp;  //得到当前选择的城市信息
     private ScrollView scrollView;//滑动视图
     SharedPreferences.Editor editor;//存储天气数据
@@ -77,6 +81,19 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences setDataSP;   //存储设置信息
     private SharedPreferences.Editor setDataSPEditor;
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.obj!=null)
+            {
+                Toast.makeText(context,"定位成功",Toast.LENGTH_SHORT).show();
+                editor.putString("cityMing",msg.obj.toString());
+                editor.commit();
+                new MyAsyncTask(msg.obj.toString(),2).execute(); //请求天气数据
+            }
+        }
+    };
 
     @Override
     protected void onRestart() {  //界面被重新加载时刷新数据
@@ -86,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
         setDataSPEditor = setDataSP.edit();
         setDataSP.getBoolean("刷新标记", true);
         if (setDataSP.getBoolean("刷新标记", true)) {
-            String cityID = sp.getString("cityID", null);//读取选择的城市
+            String cityID = sp.getString("cityMing", null);//读取选择的城市
             if (cityID == null || cityID.equals("")) {
-                cityID = "101010100";//默认为北京
-                new MyAsyncTask(cityID).execute();
+                cityID = "北京";//默认为北京
+                new MyAsyncTask(cityID,2).execute();
             } else {
-                new MyAsyncTask(cityID).execute();     //启动网络线程获取数据
+                new MyAsyncTask(cityID,2).execute();     //启动网络线程获取数据
             }
             setDataSPEditor.putBoolean("刷新标记", false);
             setDataSPEditor.commit();
@@ -124,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         setContentView(R.layout.activity_main);
-        btGenXinTQ = (Button) findViewById(R.id.btGenXinTQ);
-        btChenShi = (Button) findViewById(R.id.btChenShi);
+        btGenXinTQ = (TextView) findViewById(R.id.btGenXinTQ);
+        btChenShi = (TextView) findViewById(R.id.btChenShi);
         textChenShi = (TextView) findViewById(R.id.textChenShi);
         listTianqi = (ListView) findViewById(R.id.listTianqi);
         textDate = (TextView) findViewById(R.id.textDate);
@@ -142,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         btXuanXiang = (ImageView) findViewById(R.id.btXuanXiang);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         wengDuLineChart = (LineChart) findViewById(R.id.wenDuLineChart);
+        dinWei= (ImageView) findViewById(R.id.dingwei);
         ImageView zhuTi1 = (ImageView) findViewById(R.id.zhuTi1);
         ImageView zhuTi2 = (ImageView) findViewById(R.id.zhuTi2);
         ImageView zhuTi3 = (ImageView) findViewById(R.id.zhuTi3);
@@ -150,17 +168,22 @@ public class MainActivity extends AppCompatActivity {
         tbHeadBar = (RelativeLayout) findViewById(R.id.tbHeadBar);
         final int zhuTi = setDataSP.getInt("ZhuTi", getResources().getColor(R.color.zhuti1));
         tbHeadBar.setBackgroundColor(zhuTi);
-
         listTianqi.setFocusable(false);//   去掉list的焦点，使ScrollView默认位置在顶部
-        String cityID = sp.getString("cityID", null);//读取选择的城市
+
+        if (sp.getString("cityMing", null)==null)
+        {
+            DinWeiThread dinWeiThread=new DinWeiThread();
+            dinWeiThread.start();
+        }
+        String cityID = sp.getString("cityMing", null);//读取选择的城市
         if (sp.getString("TianQIdata", null) != null)   //判断上次是否缓存了天气数据
         {
             jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
         } else if (cityID == null || cityID.equals("")) {
-            cityID = "101010100";//默认为北京
-            new MyAsyncTask(cityID).execute();
+            cityID = "北京";//默认为北京
+            new MyAsyncTask(cityID,2).execute();
         } else {
-            new MyAsyncTask(cityID).execute();     //启动网络线程获取数据
+            new MyAsyncTask(cityID,2).execute();     //启动网络线程获取数据
         }
             //读取主题
         int zhuTiID = setDataSP.getInt("ZhuTiID", 1);
@@ -193,56 +216,65 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        dinWei.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DinWeiThread dinWeiThread=new DinWeiThread();
+                dinWeiThread.start();
+            }
+        });
 
         btGenXinTQ.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {  //刷新天气按钮
-                String cityID = sp.getString("cityID", null);
-                if (cityID == null || cityID.equals("")) {
-                    cityID = "101010100";//默认为北京
-                }
-                new MyAsyncTask(cityID).execute();
-
-
-            }
-        });
+                String cityID = sp.getString("cityMing", null);
+        if (cityID == null || cityID.equals("")) {
+            cityID = "北京";//默认为北京
+        }
+        new MyAsyncTask(cityID,2).execute();
+    }
+});
 
         btChenShi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {//展开策划菜单
+@Override
+public void onClick(View view) {//展开策划菜单
 
-                Intent intent = new Intent(context, CityActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.heng_yi_in, R.anim.heng_yi_out);
-                mMyDrawable.closeDrawer(Gravity.LEFT);
-            }
+        Intent intent = new Intent(context, CityActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.heng_yi_in, R.anim.heng_yi_out);
+        mMyDrawable.closeDrawer(Gravity.LEFT);
+        }
         });
         //设置主题
         zhuTi1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(1,R.mipmap.zhuti1png, ContextCompat.getColor(context, R.color.zhuti1));
+                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
             }
         });
         zhuTi2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(2,R.mipmap.zhuti2png,ContextCompat.getColor(context, R.color.zhuti2));
+                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
             }
         });
         zhuTi3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(3,R.mipmap.zhuti3png,ContextCompat.getColor(context, R.color.zhuti3));
+                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
             }
         });
         zhuTi4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(4,R.mipmap.zhuti4png,ContextCompat.getColor(context, R.color.zhuti4));
+                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
             }
         });
-        Button guanyu= (Button) findViewById(R.id.btGuanYu);
+        TextView guanyu= (TextView) findViewById(R.id.btGuanYu);
         guanyu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -259,22 +291,30 @@ public class MainActivity extends AppCompatActivity {
         setDataSPEditor.putInt("ZhuTiID", id);
         setDataSPEditor.commit();
         tbHeadBar.setBackgroundColor( zhuTiColor);
-        jieXiTianqiData(sp.getString("TianQIdata", null));//读取缓存的天气数据到界面
-        Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
+        jieXiTianqiData(sp.getString("TianQIdata", null));//更新界面
+
     }
 
 
     class MyAsyncTask extends AsyncTask<Void, Void, String> {
         private String city;
+        private int ID;
 
-        public MyAsyncTask(String city) {
+        /***
+         *
+         * @param city  城市名字或城市ID
+         * @param ID   ID为1是城市id，id为2是城市名字
+         */
+        public MyAsyncTask(String city, int ID) {
             this.city = city;
+            this.ID = ID;
         }
 
         @Override
         protected String doInBackground(Void... voids) {
+
             Tools tools = new Tools();
-            String chaengshi = tools.HttpUrl(context, city);
+            String chaengshi = tools.HttpUrl(ID, city);
             Log.d(TAG, "数据 " + chaengshi);
             String data = "";
             try {
@@ -377,5 +417,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+   class DinWeiThread extends Thread{
+       @Override
+       public void run() {
+           super.run();
+           super.run();
+           IPdinWei iPdinWei=new IPdinWei();
+           String weiZhi = iPdinWei.getWeiZhi();
+           Log.d(TAG, "我的位置 " +weiZhi);
+           Message message=new Message();
+           message.obj=weiZhi;
+           message.what=1;
+           handler.sendMessage(message);
 
+       }
+   }
 }

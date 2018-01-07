@@ -17,11 +17,13 @@
         android:textColor="#ffffff"
         android:textSize="16sp" />
 
+
     <LinearLayout
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="28dp">
+        android:layout_marginTop="28dp"
+        android:id="@+id/linearLayout">
 
         <ImageView
             android:id="@+id/btXuanXiang"
@@ -29,5 +31,18 @@
             android:layout_height="wrap_content"
             android:src="@drawable/xuanxian" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/dinwei"
+        android:id="@+id/dingwei"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        />
+
 
 </RelativeLayout>

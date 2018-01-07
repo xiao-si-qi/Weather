@@ -19,9 +19,26 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Tools  {
     private static final String TAG = "Tools";
-    public String HttpUrl(Context context,String type) {
+
+
+    /***
+     *
+     * @param ID  ID=1时是城市ID， ID为2时是城市名字
+     * @param type   城市
+     * @return
+     */
+    public String HttpUrl(int ID, String type) {
         String res="";
-        String path="http://wthrcdn.etouch.cn/weather_mini?citykey="+type;
+        String path="";
+        if (ID==1)
+        {
+            path="http://wthrcdn.etouch.cn/weather_mini?citykey="+type;
+        }
+        if (ID==2){
+          path="http://wthrcdn.etouch.cn/weather_mini?city="+type;
+        }
+
+        Log.d(TAG, "HttpUrl: "+path);
         try {
             URL url=new URL(path);
             HttpURLConnection conn= (HttpURLConnection) url.openConnection();

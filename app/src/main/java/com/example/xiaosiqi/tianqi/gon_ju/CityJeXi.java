@@ -76,7 +76,7 @@ public class CityJeXi {
             List<CountyClass> countyClasses =new ArrayList<>();
             for (int i=0;i<jsonArray.length();i++)
             {   JSONObject object=new JSONObject( jsonArray.get(i).toString());
-               // Log.d(TAG, object.getString("name"));
+               //Log.d(TAG, object.getString("name"));
                 countyClasses.add(new CountyClass(object.getInt("id"),object.getString("name"),object.getString("code")));
             }
             return countyClasses;
