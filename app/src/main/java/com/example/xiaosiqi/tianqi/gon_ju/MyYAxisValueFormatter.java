@@ -26,7 +26,6 @@ public class MyYAxisValueFormatter implements YAxisValueFormatter, ValueFormatte
         // access the YAxis object to get more information
         return mFormat.format(value) + "℃"; // e.g. append a dollar-sign
     }
-
     @Override
     public String getFormattedValue(float v, Entry entry, int i, ViewPortHandler viewPortHandler) {
         return mFormat.format(v)+"℃";

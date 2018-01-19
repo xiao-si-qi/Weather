@@ -155,7 +155,6 @@ public class CityActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();       //通知spinner刷新数据
                     spCity.setSelection((int)sp.getLong("city",0));
                 }
-
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
 
