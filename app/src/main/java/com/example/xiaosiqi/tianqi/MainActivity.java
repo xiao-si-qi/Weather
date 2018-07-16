@@ -287,6 +287,26 @@ public void onClick(View view) {//展开策划菜单
                 startActivity(intent);
             }
         });
+        mMyDrawable.setDrawerListener(new DrawerLayout.DrawerListener() {//消除侧滑菜单对下层布局的影响
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                drawerView.setClickable(true);
+
+            }
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     private void  setChengGong()
