@@ -19,8 +19,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Tools  {
     private static final String TAG = "Tools";
-
-
     /***
      *
      * @param ID  ID=1时是城市ID， ID为2时是城市名字

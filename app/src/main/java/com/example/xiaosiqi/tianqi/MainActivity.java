@@ -42,6 +42,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -86,8 +88,9 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             if (msg.obj!=null)
             {
-                Toast.makeText(context,"定位成功",Toast.LENGTH_SHORT).show();
-                editor.putString("cityMing",msg.obj.toString());
+                Toast toast=Toast.makeText(context,"定位成功",Toast.LENGTH_SHORT);
+                showMyToast(toast, 1*1000);
+                editor.putString("cityMing",    msg.obj.toString());
                 editor.commit();
                 new MyAsyncTask(msg.obj.toString(),2).execute(); //请求天气数据
             }
@@ -252,28 +255,28 @@ public void onClick(View view) {//展开策划菜单
             @Override
             public void onClick(View view) {
                 setZhuTi(1,R.mipmap.zhuti1png, ContextCompat.getColor(context, R.color.zhuti1));
-                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
+                setChengGong();
             }
         });
         zhuTi2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(2,R.mipmap.zhuti2png,ContextCompat.getColor(context, R.color.zhuti2));
-                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
+                setChengGong();
             }
         });
         zhuTi3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(3,R.mipmap.zhuti3png,ContextCompat.getColor(context, R.color.zhuti3));
-                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
+                setChengGong();
             }
         });
         zhuTi4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setZhuTi(4,R.mipmap.zhuti4png,ContextCompat.getColor(context, R.color.zhuti4));
-                Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT).show();
+                setChengGong();
             }
         });
         TextView guanyu= (TextView) findViewById(R.id.btGuanYu);
@@ -286,7 +289,11 @@ public void onClick(View view) {//展开策划菜单
         });
     }
 
-
+    private void  setChengGong()
+    {
+        Toast toast=Toast.makeText(context,"设置成功",Toast.LENGTH_SHORT);
+        showMyToast(toast, 1*1000);
+    }
     private void setZhuTi(int id, int zhuTi, int zhuTiColor) {  //主题设置方法
         zhuTiPNG.setBackgroundResource(zhuTi);
         setDataSPEditor.putInt("ZhuTi",zhuTiColor);
@@ -335,7 +342,8 @@ public void onClick(View view) {//展开策划菜单
             super.onPostExecute(s);
             if (!(s == null || s.equals(""))) {
                 jieXiTianqiData(s); //解析天气数据
-                Toast.makeText(context, "刷新成功", Toast.LENGTH_SHORT).show();
+                Toast toast=Toast.makeText(context, "刷新成功", Toast.LENGTH_SHORT);
+                showMyToast(toast,1*1000);
                 editor.putString("TianQIdata", s);  //缓存天气数据
                 editor.commit();
             } else {
@@ -413,13 +421,25 @@ public void onClick(View view) {//展开策划菜单
 
         } catch (Exception e) {
             e.printStackTrace();
-
         }
-
-
     }
-
-   class DinWeiThread extends Thread{
+    public void showMyToast(final Toast toast, final int cnt) {//
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.show();
+            }
+        }, 0, 3000);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.cancel();
+                timer.cancel();
+            }
+        }, cnt );
+    }
+    class DinWeiThread extends Thread{
        @Override
        public void run() {
            super.run();
@@ -431,7 +451,6 @@ public void onClick(View view) {//展开策划菜单
            message.obj=weiZhi;
            message.what=1;
            handler.sendMessage(message);
-
        }
    }
 }

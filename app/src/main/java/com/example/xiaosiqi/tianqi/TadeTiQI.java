@@ -8,9 +8,7 @@ import org.json.JSONObject;
  */
 
 public class TadeTiQI {
-
-
-
+    
     public TianQi getTianQi(String aDay)
     {   TianQi tianQi=new TianQi();
         try {
