@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -32,6 +31,12 @@ import com.example.xiaosiqi.tianqi.network.IPdinWei;
 import com.example.xiaosiqi.tianqi.network.Tools;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView zhuTiPNG;
     RelativeLayout tbHeadBar;
 
+
     //以下为显示第一天的天气数据的控件
     private TextView textDate;    //显示今天的日期
     private TextView textWenDu;   //显示今天的温度
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textGanmao;  //显示感冒指数
     private ImageView imageType;  //显示天气图标
     private TextView textType;    //显示今天天气
+    private RefreshLayout refreshLayout;  //下拉更新
     //以下为图表控件的定义
     private LineChart wengDuLineChart;
     /*侧滑菜单布局*/
@@ -171,6 +178,22 @@ public class MainActivity extends AppCompatActivity {
         ImageView zhuTi4 = (ImageView) findViewById(R.id.zhuTi4);
         zhuTiPNG = (ImageView) findViewById(R.id.zhuTiPNG);
         tbHeadBar = (RelativeLayout) findViewById(R.id.tbHeadBar);
+        refreshLayout = (RefreshLayout)findViewById(R.id.refreshLayout);
+        refreshLayout.setEnableLoadMore(false);//关闭加载更多
+
+
+        //下拉刷新
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(1000/*,false*/);//传入false表示刷新失败
+                String cityID = sp.getString("cityMing", null);//读取选择的城市
+                new MyAsyncTask(cityID,2).execute();     //启动网络线程获取数据
+            }
+        });
+
+
         final int zhuTi = setDataSP.getInt("ZhuTi", getResources().getColor(R.color.zhuti1));
         tbHeadBar.setBackgroundColor(zhuTi);
         listTianqi.setFocusable(false);//   去掉list的焦点，使ScrollView默认位置在顶部
@@ -320,6 +343,7 @@ public void onClick(View view) {//展开策划菜单
         setDataSPEditor.putInt("ZhuTiID", id);
         setDataSPEditor.commit();
         tbHeadBar.setBackgroundColor( zhuTiColor);
+        refreshLayout.setPrimaryColors(zhuTiColor);
         jieXiTianqiData(sp.getString("TianQIdata", null));//更新界面
 
     }
